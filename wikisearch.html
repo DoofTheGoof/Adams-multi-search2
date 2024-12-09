@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wikipedia Information Display</title>
+    <style>
+        /* Center the content on the page and adjust body height */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to right, #FF6F61, #D8BFD8); /* Gradient background */
+            margin-left: auto;
+            margin-right: auto;
+            background-size: cover; /* Ensure the gradient fills the screen */
+        }
+
+        .search-container {
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        /* Back button style */
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Main container for the page */
+        .container {
+            width: 100%;
+            max-width: 1500px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            height: 80vh;
+            margin-top: 50px;
+            margin-left: auto;
+            margin-right: auto;  
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        /* Style the search query bar */
+        input[type="text"] {
+            padding: 15px;
+            font-size: 18px;
+            width: 100%;  /* Full width */
+            max-width: 1000px;
+            border-radius: 30px;
+            border: 2px solid #007BFF;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+            transition: box-shadow 0.3s ease-in-out;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+
+        /* Add shadow to search query bar when focused */
+        input[type="text"]:focus {
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.6);
+            outline: none;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Style the search button */
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+        }
+
+        #output {
+            margin-top: 5px;
+        }
+
+        .result {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            text-align: center;
+            width: 100%;  /* Makes it more flexible */
+            max-width: 1450px;  /* Keeps a max width */
+        }
+
+        /* Style for the scrollable content box */
+        #wikipediaContent {
+            width: 100%;  /* Makes it flexible */
+            max-width: 1450px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 15px;
+            background-color: #f9f9f9;
+            height: 100%;
+            overflow-y: auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Style for the plural word pop-up */
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            display: none; /* Initially hidden */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Ensure it's on top */
+            font-size: 30px;
+            text-align: center;
+        }
+
+        .popup-content {
+            background: red;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            border: 2px solid white;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        /* Shake animation */
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+            100% { transform: translateX(10px); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Back button -->
+    <a href="adamsmultisearch.html" class="back-button" target="_blank">Back To Home</a>
+
+    <!-- Search bar and button placed outside the container -->
+    <div class="search-container">
+        <h1>Wikipedia Search</h1>
+        <input type="text" id="searchQuery" placeholder="Enter search query" />
+        <button onclick="searchWikipedia()">Search</button>
+    </div>
+
+    <div class="container">
+        <div id="output"></div>
+        <div id="wikipediaContent"></div>
+    </div>
+
+    <!-- Popup for plural word detection -->
+    <div id="popup" class="popup">
+        <div class="popup-content">Please avoid using plural words!</div>
+    </div>
+
+    <script>
+        // Function to search Wikipedia
+        async function searchWikipedia() {
+            const query = document.getElementById('searchQuery').value.trim();
+            const outputDiv = document.getElementById('output');
+            const contentDiv = document.getElementById('wikipediaContent');
+            const popup = document.getElementById('popup');
+
+            if (!query) {
+                outputDiv.innerHTML = `<p>Please enter a search term.</p>`;
+                return;
+            }
+
+            // Check if the query is plural
+            if (query.endsWith('s')) {
+                // Show the popup if plural word is detected
+                popup.style.display = 'flex';
+                setTimeout(() => {
+                    popup.style.display = 'none';
+                }, 3000); // Hide after 3 seconds
+                return;
+            }
+
+            outputDiv.innerHTML = `<p>Fetching information for "${query}"...</p>`;
+            contentDiv.innerHTML = "";  // Clear the previous content
+
+            // Wikipedia API URL to fetch the full page content
+            const apiUrl = `https://en.wikipedia.org/w/api.php?action=parse&format=json&origin=*&page=${encodeURIComponent(query)}&prop=text`;
+
+            try {
+                const response = await fetch(apiUrl);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const page = data.parse;
+
+                if (!page) {
+                    outputDiv.innerHTML = `<p>No results found for "${query}".</p>`;
+                    return;
+                }
+
+                const title = page.title;
+                const content = page.text["*"]; // This contains the HTML content of the article
+
+                // Display the page title
+                outputDiv.innerHTML = `<div class="result"><h2>${title}</h2></div>`;
+
+                // Insert the content inside the scrollable container
+                contentDiv.innerHTML = content;
+            } catch (error) {
+                outputDiv.innerHTML = `<p>Error fetching data: ${error.message}</p>`;
+            }
+        }
+
+        // Trigger search when Enter key is pressed
+        document.getElementById('searchQuery').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchWikipedia();
+            }
+        });
+    </script>
+</body>
+</html>

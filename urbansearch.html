@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urban Dictionary Search</title>
+    <style>
+        /* General reset and font */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to right, #00BFFF, #FF6347); /* New blue to orange gradient */
+            background-size: cover;
+            text-align: center;
+        }
+
+        /* Back button */
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Search section */
+        .search-container {
+            width: 100%;
+            max-width: 800px;
+            margin-top: 50px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        /* Style the search query bar */
+        input[type="text"] {
+            padding: 15px;
+            font-size: 18px;
+            width: 100%;
+            max-width: 600px;
+            border-radius: 30px;
+            border: 2px solid #007BFF;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+            transition: box-shadow 0.3s ease-in-out;
+        }
+
+        input[type="text"]:focus {
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.6);
+            outline: none;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Main content container */
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+            overflow: hidden;
+            text-align: left;
+        }
+
+        .result {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+
+        .result h3 {
+            margin-top: 0;
+        }
+
+        /* Scrollable content */
+        #urbanContent {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        /* Popup for plural word detection */
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .popup-content {
+            background: red;
+            padding: 50px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            animation: shake 0.5s ease-in-out;
+            font-size: 2rem; /* Increased font size */
+            font-weight: bold;
+            text-align: center;
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+            100% { transform: translateX(10px); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Back button -->
+    <a href="adamsmultisearch.html" class="back-button" target="_blank">Back To home</a>
+
+    <!-- Search bar and button placed outside the container -->
+    <div class="search-container">
+        <h1>Urban Dictionary Search</h1>
+        <input type="text" id="searchQuery" placeholder="Enter search query" />
+        <button onclick="searchUrbanDictionary()">Search</button>
+    </div>
+
+    <div class="container">
+        <div id="output"></div>
+        <div id="urbanContent"></div>
+    </div>
+
+    <!-- Popup for plural word detection -->
+    <div id="popup" class="popup">
+        <div class="popup-content">Please avoid using plural words!</div>
+    </div>
+
+    <script>
+        // Function to search Urban Dictionary
+        async function searchUrbanDictionary() {
+            const query = document.getElementById('searchQuery').value.trim();
+            const outputDiv = document.getElementById('output');
+            const contentDiv = document.getElementById('urbanContent');
+            const popup = document.getElementById('popup');
+
+            if (!query) {
+                outputDiv.innerHTML = `<p>Please enter a search term.</p>`;
+                return;
+            }
+
+            // Check if the query is plural
+            if (query.endsWith('s')) {
+                // Show the popup if plural word is detected
+                popup.style.display = 'flex';
+                setTimeout(() => {
+                    popup.style.display = 'none';
+                }, 3000); // Hide after 3 seconds
+                return;
+            }
+
+            outputDiv.innerHTML = `<p>Fetching definitions for "${query}"...</p>`;
+            contentDiv.innerHTML = "";  // Clear the previous content
+
+            // Urban Dictionary API URL to fetch definitions
+            const apiUrl = `https://api.urbandictionary.com/v0/define?term=${encodeURIComponent(query)}`;
+
+            try {
+                const response = await fetch(apiUrl);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const definitions = data.list;
+
+                if (!definitions || definitions.length === 0) {
+                    outputDiv.innerHTML = `<p>No definitions found for "${query}".</p>`;
+                    return;
+                }
+
+                // Display multiple definitions
+                outputDiv.innerHTML = `<div class="result"><h2>Definitions for "${query}":</h2></div>`;
+
+                definitions.forEach(def => {
+                    contentDiv.innerHTML += `
+                        <div class="result">
+                            <h3>${def.word}</h3>
+                            <p><strong>Definition:</strong> ${def.definition}</p>
+                            <p><strong>Example:</strong> ${def.example || 'No example available'}</p>
+                            <p><strong>Rating:</strong> ${def.thumbs_up} thumbs up / ${def.thumbs_down} thumbs down</p>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                outputDiv.innerHTML = `<p>Error fetching data: ${error.message}</p>`;
+            }
+        }
+
+        // Trigger search when Enter key is pressed
+        document.getElementById('searchQuery').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchUrbanDictionary();
+            }
+        });
+    </script>
+</body>
+</html>

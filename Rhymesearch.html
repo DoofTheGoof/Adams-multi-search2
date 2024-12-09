@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rhyming Word Finder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to right, #00c6ff, #0072ff); /* Blue gradient */
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        input[type="text"] {
+            padding: 15px;
+            font-size: 18px;
+            width: 100%;
+            max-width: 600px;
+            border-radius: 30px;
+            border: 2px solid #007BFF;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+            transition: box-shadow 0.3s ease-in-out;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+
+
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #results {
+            margin-top: 20px;
+            max-height: 500px;
+            overflow-y: scroll;
+        }
+
+        .result {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <a href="adamsmultisearch.html" class="back-button" target="_blank">Back To Home</a>
+    <div class="container">
+        <h1>Rhyming Word Finder</h1>
+        <input type="text" id="query" placeholder="Enter a word to find rhymes" />
+        <button onclick="findRhymes()">Find Rhymes</button>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        // Function to get rhymes from the Datamuse API
+        async function findRhymes() {
+            const query = document.getElementById('query').value.trim();
+            const resultsDiv = document.getElementById('results');
+
+            if (!query) {
+                resultsDiv.innerHTML = '<p>Please enter a word.</p>';
+                return;
+            }
+
+            // Make the API request to Datamuse with a larger number of results
+            const apiUrl = `https://api.datamuse.com/words?rel_rhy=${encodeURIComponent(query)}&max=200`;
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                if (data.length === 0) {
+                    resultsDiv.innerHTML = `<p>No rhymes found for "${query}".</p>`;
+                    return;
+                }
+
+                // Clear previous results
+                resultsDiv.innerHTML = '';
+
+                // Loop through the data and display each rhyme
+                data.forEach(item => {
+                    const resultItem = document.createElement('div');
+                    resultItem.classList.add('result');
+                    resultItem.innerHTML = `<strong>${item.word}</strong>`;
+                    resultsDiv.appendChild(resultItem);
+                });
+
+            } catch (error) {
+                resultsDiv.innerHTML = `<p>Error fetching data: ${error.message}</p>`;
+            }
+        }
+
+        // Trigger search when Enter key is pressed
+        document.getElementById('query').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                findRhymes();
+            }
+        });
+    </script>
+
+</body>
+</html>
