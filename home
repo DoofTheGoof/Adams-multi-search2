@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adams Multi Search</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #FF6F61, #8A2BE2); /* Beautiful gradient */
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            min-height: 100vh;
+            overflow-y: auto; /* Allow scrolling if content exceeds screen */
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 50px;
+            color: #fff;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+            margin-top: 20px;
+        }
+
+        p {
+            font-size: 20px;
+            margin-top: 10px;
+            color: #fff;
+            max-width: 800px;
+        }
+
+        /* Card Container for Buttons */
+        .button-container {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap; /* Allow wrapping */
+            width: 90%;
+            max-width: 1200px;
+            gap: 30px;
+            box-sizing: border-box;
+        }
+
+        /* Each individual card */
+        .card {
+            background-color: #fff;
+            color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 18%;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+            text-decoration: none; /* Remove underline */
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .card h3 {
+            font-size: 22px;
+            color: #007BFF;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            font-size: 16px;
+            color: #555;
+        }
+
+        /* Adding some beautiful background flair */
+        .background-flare {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: pulse 4s infinite ease;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.5);
+                opacity: 0.6;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.3;
+            }
+        }
+
+        /* Ensure the page is scrollable on small screens */
+        @media (max-width: 768px) {
+            .card {
+                width: 45%; /* On smaller screens, the cards take up 45% of the width */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                width: 100%; /* On mobile screens, the cards take up 100% of the width */
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="background-flare"></div> <!-- Background effect -->
+
+    <h1>Adams Multi Search</h1>
+    <p>Your one-stop destination for amazing web tools and features. Explore our pages to discover the power of searching, creativity, and more!</p>
+
+    <!-- Card Container for the Links -->
+    <div class="button-container">
+        <!-- Card 1: Unsplash Image Search -->
+        <a href="unsplsearch.html" target="_blank" class="card">
+            <img src="https://via.placeholder.com/300x200?text=Unsplash+Search" alt="Unsplash Image Search">
+            <h3>Unsplash Image Search</h3>
+            <p>Search for beautiful and high-quality images for your projects from Unsplash.</p>
+        </a>
+
+        <!-- Card 2: Wikipedia Search -->
+        <a href="wikisearch.html" target="_blank" class="card">
+            <img src="https://via.placeholder.com/300x200?text=Wikipedia+Search" alt="Wikipedia Search">
+            <h3>Wikipedia Search</h3>
+            <p>Find reliable and informative articles from the vast Wikipedia database.</p>
+        </a>
+
+        <!-- Card 3: Urban Dictionary -->
+        <a href="urbansearch.html" target="_blank" class="card">
+            <img src="https://via.placeholder.com/300x200?text=Urban+Dictionary" alt="Urban Dictionary">
+            <h3>Urban Dictionary</h3>
+            <p>Look up the latest slang terms and their meanings with Urban Dictionary.</p>
+        </a>
+
+        <!-- Card 4: Synonym Search -->
+        <a href="synonymsearch.html" target="_blank" class="card">
+            <img src="https://via.placeholder.com/300x200?text=Synonym+Search" alt="Synonym Search">
+            <h3>Synonym Search</h3>
+            <p>Find synonyms and antonyms to expand your vocabulary and writing.</p>
+        </a>
+
+        <!-- Card 5: Rhyming Dictionary -->
+        <a href="Rhymesearch.html" target="_blank" class="card">
+            <img src="https://via.placeholder.com/300x200?text=Rhyming+Dictionary" alt="Rhyming Dictionary">
+            <h3>Rhyming Dictionary</h3>
+            <p>Search for words that rhyme for creative writing and poetry.</p>
+        </a>
+    </div>
+
+    <script>
+        // Function to show the popup
+        function showPopup() {
+            const popup = document.getElementById('popup');
+            popup.style.display = 'flex';
+            popup.style.animation = 'slideIn 1s ease-out';
+        }
+
+        // Function to close the popup
+        function closePopup() {
+            const popup = document.getElementById('popup');
+            popup.style.display = 'none';
+        }
+
+        // Show the popup automatically when the page loads
+        window.onload = function () {
+            setTimeout(showPopup, 1000);  // Show popup after 1 second
+        }
+    </script>
+
+</body>
+</html>
